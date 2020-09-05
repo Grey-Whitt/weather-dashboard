@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Dashboard</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <link rel="stylesheet" href="./assets/style.css">
+</head>
+<body>
+    <nav class="mb-3 justify-content-center navbar navbar-dark bg-dark">
+        <span class="navbar-brand mb-0 h1"><h1>Weather Dashboard</h1></span>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row justify-content-around">
+            <!-- search area -->
+            <div class="col-lg-3 bg-secondary">
+                <form class="search">
+                    
+                    <input class="w-100" id="city-search" type="text" placeholder="Search for a City"/>
+
+                    <input
+                    class="w-100 btn btn-primary"
+                    id="add-city"
+                    value=" Search "
+                    type="submit"/>
+
+                </form>
+            </div>
+
+            <!-- weather data area -->
+            <div class="col-lg-8 bg-primary">
+                <!-- current weather data -->
+                <div class="current">
+                    <h2> <span id="date"></span><span id="icon"></span></h2>
+
+                    <ul class="data">
+                        <li>Temperature:</li>
+                        <li>Humidity:</li>
+                        <li>Wind Speed:</li>
+                        <li>UV Index: <span class="uv"></span></li>
+                    </ul>
+                </div>
+                <!-- 5 day forecast -->
+            </div>
+        </div>
+    </div>
+
+
+    <footer>
+        <h2>Weather Dashboard by Grey Whittenberger</h2>
+        
+        <div>
+          &copy; Weather Dashboard
+        </div>
+  
+    </footer>
+
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+    <script src="./assets/js/script.js"></script>
+</body>
+</html>
