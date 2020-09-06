@@ -34,7 +34,8 @@ var setNone = function() {
 
     $('#wind').text('Wind Speed:')
 
-    $('#uvData').text('')
+    $('#uvData').text('').removeClass()
+    
 }
 
 //gets weather data for searched city and passes it to the BuildData function
@@ -86,7 +87,7 @@ var getWeather = function(city) {
 //Puts data in correct places so the user can see it
 var buildData = function(city, currentTemp, humid, wind, uv) {
 
-    $('#curCity').text(`${city} ${date}`)
+    $('#curCity').text(`${city} (${date})`)
 
     $('#temp').append( ` ${currentTemp}\u00B0F`)
 
@@ -97,11 +98,11 @@ var buildData = function(city, currentTemp, humid, wind, uv) {
     $('#uvData').append( ` ${uv}`)
 
     //checks the uv index to see if it is favorable, moderate, or high
-    if (uv <= 2) {
+    if (uv <= 3) {
         $('#uvData').addClass('bg-success')
-    } else if (uv > 2 && uv <= 6) {
+    } else if (uv > 3 && uv <= 7) {
         $('#uvData').addClass('bg-warning')
-    } else if (uv > 6) {
+    } else if (uv > 7) {
         $('#uvData').addClass('bg-danger')
     }
 
@@ -114,7 +115,6 @@ var buildData = function(city, currentTemp, humid, wind, uv) {
 var saveSearch =  function(city) {
     //if statement here to delete oldest item in array if array is larger then a certain number
     
-    //check if city is already in array
     
     searchHistory.unshift(city)
     
