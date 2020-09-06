@@ -1,11 +1,30 @@
 var date = moment().format('L')
 var key = '570d8de33c9f13f6bcd17075f75bc5f7'
+var searchHistory = [];
 
+if (localStorage.getItem('history') === null) {
+    localStorage.setItem('history', '[]')
+}
 
 
 //on click get set current text values to null and get weather for desired city
 $('#add-city').on('click', function() {
+    
     event.preventDefault()
+
+    setNone()
+    
+    var citySearch = $('#city-search').val().trim()
+
+    var city = citySearch.charAt(0).toUpperCase() + citySearch.slice(1)
+
+    getWeather(city)
+
+    $('#city-search').val('')
+})
+
+//set all values to null
+var setNone = function() {
 
     $('#curCity').text('')
 
@@ -16,14 +35,7 @@ $('#add-city').on('click', function() {
     $('#wind').text('Wind Speed:')
 
     $('#uvData').text('')
-    
-
-    city = $('#city-search').val()
-
-    getWeather(city)
-
-    $('#city-search').val('')
-})
+}
 
 //gets weather data for searched city and passes it to the BuildData function
 var getWeather = function(city) {
@@ -36,6 +48,14 @@ var getWeather = function(city) {
     
         if (response.ok) {
             response.json().then(function (data) {
+
+                if (searchHistory.includes(city)) {
+                    //if the city is already in the array do nothing
+                } else {
+                    //if city isnt in array save it
+                    saveSearch(city)
+                }
+
                 //gets the data we need from the response
                 var currentTemp = data.main.temp
                 var humid = data.main.humidity
@@ -46,7 +66,7 @@ var getWeather = function(city) {
 
                 
                 //gets uv index from location then passes all data to the buildData function
-                return fetch(`http://api.openweathermap.org/data/2.5/uvi?appid=${key}&lat=${lat}&lon=${lon}`)
+                fetch(`http://api.openweathermap.org/data/2.5/uvi?appid=${key}&lat=${lat}&lon=${lon}`)
                 .then(function(response) {
                     response.json().then(function(data){
                         uv = data.value
@@ -68,22 +88,67 @@ var buildData = function(city, currentTemp, humid, wind, uv) {
 
     $('#curCity').text(`${city} ${date}`)
 
-    $('#temp').append( ` ${currentTemp}`)
+    $('#temp').append( ` ${currentTemp}\u00B0F`)
 
-    $('#humid').append( ` ${humid}`)
+    $('#humid').append( ` ${humid}%`)
 
-    $('#wind').append( ` ${wind}`)
+    $('#wind').append( ` ${wind} MPH`)
 
     $('#uvData').append( ` ${uv}`)
 
     //checks the uv index to see if it is favorable, moderate, or high
     if (uv <= 2) {
         $('#uvData').addClass('bg-success')
-    } else if (uv > 2 && uv <= 5) {
+    } else if (uv > 2 && uv <= 6) {
         $('#uvData').addClass('bg-warning')
-    } else if (uv > 5) {
+    } else if (uv > 6) {
         $('#uvData').addClass('bg-danger')
     }
 
-
 }
+
+
+
+
+//saves search history
+var saveSearch =  function(city) {
+    //if statement here to delete oldest item in array if array is larger then a certain number
+    
+    //check if city is already in array
+    
+    searchHistory.unshift(city)
+    
+
+    localStorage.setItem('history', JSON.stringify(searchHistory));
+
+    
+    lastSearch();
+    
+}
+
+//loads search history
+
+var loadSearch = function() {
+    var storedCities = JSON.parse(localStorage.getItem('history'))
+    searchHistory = storedCities
+    
+    $.each(storedCities, function(index, value){
+        $('#history').append("<li class='list-group-item list-group-item-action'>" + value + "</li>")
+    })
+    
+}
+
+//adds last searched city to top of search history
+var lastSearch = function() {
+    newCity = searchHistory[0]
+    $('#history').prepend("<li class='list-group-item list-group-item-action'>" + newCity + "</li>")
+}
+
+$( "#history" ).on( "click", "li", function( event ) {
+    event.preventDefault();
+    setNone()
+    getWeather($(this).text())
+});
+
+loadSearch();
+

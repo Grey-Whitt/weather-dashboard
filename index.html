@@ -18,7 +18,7 @@
             <div class="col-lg-3 bg-secondary">
                 <form class="search">
                     
-                    <input class="w-100" id="city-search" type="text" placeholder="Search for a City"/>
+                    <input class="w-100" id="city-search" type="text" placeholder="Search for a City" autocomplete="off"/>
 
                     <input
                     class="w-100 btn btn-primary"
@@ -27,10 +27,14 @@
                     type="submit"/>
 
                 </form>
+
+                <ul class="list-group" id="history">
+
+                </ul>
             </div>
 
             <!-- weather data area -->
-            <div class="col-lg-8 bg-primary">
+            <div class="col-lg-8 bg-secondary">
                 <!-- current weather data -->
                 <div class="current">
                     <h2 id='curCity'><span id="icon"></span></h2>
