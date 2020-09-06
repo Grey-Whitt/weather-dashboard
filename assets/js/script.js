@@ -35,6 +35,8 @@ var setNone = function() {
     $('#wind').text('Wind Speed:')
 
     $('#uvData').text('').removeClass()
+
+    $('#icon').attr('src', '')
     
 }
 
@@ -61,6 +63,9 @@ var getWeather = function(city) {
                 var currentTemp = data.main.temp
                 var humid = data.main.humidity
                 var wind = data.wind.speed
+                var icon = data.weather[0].icon
+                
+                
                 
                 var lat =  data.coord.lat
                 var lon =  data.coord.lon
@@ -71,7 +76,7 @@ var getWeather = function(city) {
                 .then(function(response) {
                     response.json().then(function(data){
                         uv = data.value
-                        buildData(city, currentTemp, humid, wind, uv)
+                        buildData(city, currentTemp, humid, wind, uv, icon)
                     })
                 })
 
@@ -85,9 +90,11 @@ var getWeather = function(city) {
 }
 
 //Puts data in correct places so the user can see it
-var buildData = function(city, currentTemp, humid, wind, uv) {
+var buildData = function(city, currentTemp, humid, wind, uv, icon) {
 
-    $('#curCity').text(`${city} (${date})`)
+    $('#curCity').append(`${city} (${date})`)
+    console.log(icon)
+    $('#icon').attr('src', `http://openweathermap.org/img/wn/${icon}@2x.png`)
 
     $('#temp').append( ` ${currentTemp}\u00B0F`)
 
@@ -96,6 +103,8 @@ var buildData = function(city, currentTemp, humid, wind, uv) {
     $('#wind').append( ` ${wind} MPH`)
 
     $('#uvData').append( ` ${uv}`)
+
+    
 
     //checks the uv index to see if it is favorable, moderate, or high
     if (uv <= 3) {
