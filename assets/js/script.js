@@ -142,7 +142,7 @@ var saveSearch =  function(city) {
     
     searchHistory.unshift(city)
 
-    //makes sure that search history doesnt get too long
+    //makes sure that the search history doesnt get too long
     if (searchHistory.length >= 11) {
         searchHistory.pop()
         $('#history li:last-child').remove()
