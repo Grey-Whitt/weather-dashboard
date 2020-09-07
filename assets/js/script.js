@@ -1,7 +1,6 @@
 var date = moment().format('L')
 var key = '570d8de33c9f13f6bcd17075f75bc5f7'
 var searchHistory = [];
-
 if (localStorage.getItem('history') === null) {
     localStorage.setItem('history', '[]')
 }
@@ -42,7 +41,7 @@ var setNone = function() {
 
 //gets weather data for searched city and passes it to the BuildData function
 var getWeather = function(city) {
-    //makes fetch to server requesting weather data on the searched city
+    //makes fetch to server requesting latitude and longitude on the searched city. reasoning for this is that the one call api needs cords and not city name
     fetch("https://api.openweathermap.org/data/2.5/weather?q=" +
     city +
     "&units=imperial" +
@@ -59,27 +58,45 @@ var getWeather = function(city) {
                     saveSearch(city)
                 }
 
-                //gets the data we need from the response
-                var currentTemp = data.main.temp
-                var humid = data.main.humidity
-                var wind = data.wind.speed
-                var icon = data.weather[0].icon
-                
-                
-                
                 var lat =  data.coord.lat
                 var lon =  data.coord.lon
 
                 
-                //gets uv index from location then passes all data to the buildData function
-                fetch(`http://api.openweathermap.org/data/2.5/uvi?appid=${key}&lat=${lat}&lon=${lon}`)
-                .then(function(response) {
-                    response.json().then(function(data){
-                        uv = data.value
-                        buildData(city, currentTemp, humid, wind, uv, icon)
-                    })
-                })
 
+                fetch(`https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=minutely,hourly&units=imperial&appid=${key}`)
+                .then(function(response) {
+                    response.json().then(function(data1){
+                        
+                        //gets the data we need from the response
+                        var currentTemp = data1.current.temp
+                        var humid = data1.current.humidity
+                        var wind = data1.current.wind_speed
+                        var uv = data1.current.uvi
+                        var icon = data1.current.weather[0].icon
+
+                        buildData(city, currentTemp, humid, wind, uv, icon)
+
+                        //set the 5 day weather forecast
+                        for (var i = 1; i < 6; i++) {
+                            
+                            var futureTemp = data1.daily[i].temp.max
+                            var futureHumid = data1.daily[i].humidity
+                            var futureIcon = data1.daily[i].weather[0].icon
+                            var date = moment.unix(data1.daily[i].dt).format("MM/DD/YYYY"); 
+                            
+                            $('#date-'+[i]).text(date)
+                            $('#day-'+[i]).removeClass('d-none')
+                            $('#icon-'+[i]).attr('src', `http://openweathermap.org/img/wn/${futureIcon}@2x.png`)
+                            $('#temp-'+[i]).text(`High of ${futureTemp}\u00B0F`)
+                            $('#humid-'+[i]).text(`Humidity: ${futureHumid}%`)
+
+                        }
+
+                    })
+                    
+                })
+                 
+                
             });
             
         } else {
@@ -91,9 +108,9 @@ var getWeather = function(city) {
 
 //Puts data in correct places so the user can see it
 var buildData = function(city, currentTemp, humid, wind, uv, icon) {
-
+    setNone()
     $('#curCity').append(`${city} (${date})`)
-    console.log(icon)
+    
     $('#icon').attr('src', `http://openweathermap.org/img/wn/${icon}@2x.png`)
 
     $('#temp').append( ` ${currentTemp}\u00B0F`)
@@ -122,10 +139,14 @@ var buildData = function(city, currentTemp, humid, wind, uv, icon) {
 
 //saves search history
 var saveSearch =  function(city) {
-    //if statement here to delete oldest item in array if array is larger then a certain number
-    
     
     searchHistory.unshift(city)
+
+    //makes sure that search history doesnt get too long
+    if (searchHistory.length >= 11) {
+        searchHistory.pop()
+        $('#history li:last-child').remove()
+    }
     
 
     localStorage.setItem('history', JSON.stringify(searchHistory));
@@ -136,7 +157,6 @@ var saveSearch =  function(city) {
 }
 
 //loads search history
-
 var loadSearch = function() {
     var storedCities = JSON.parse(localStorage.getItem('history'))
     searchHistory = storedCities
@@ -155,9 +175,8 @@ var lastSearch = function() {
 
 $( "#history" ).on( "click", "li", function( event ) {
     event.preventDefault();
-    setNone()
+
     getWeather($(this).text())
 });
 
 loadSearch();
-
