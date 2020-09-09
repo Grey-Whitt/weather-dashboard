@@ -21,8 +21,8 @@ footer {
     padding: 25px 35px;
     display: flex;
     justify-content: space-between;
-    flex-wrap: wrap;
-    position: absolute;
+    position: fixed;
+    left: 0;
     bottom: 0;
 }
 
@@ -34,6 +34,8 @@ footer h2 {
 footer div {
     text-align: right;
 }
+
+
 
 .search {
     font-size: 20px;
